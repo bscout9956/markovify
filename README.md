@@ -1,6 +1,5 @@
 [![CI](https://github.com/bscout9956/markovify/workflows/CI/badge.svg)](https://github.com/bscout9956/markovify/actions)
 [![Version](https://img.shields.io/pypi/v/markovify.svg)](https://pypi.python.org/pypi/markovify)
-[![Code coverage](https://img.shields.io/coveralls/bscout9956/markovify.svg)](https://coveralls.io/github/bscout9956/markovify)
 
 # Markovify
 
