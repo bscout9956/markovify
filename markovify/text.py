@@ -1,6 +1,6 @@
 import functools
 import re
-import json
+import orjson
 import random
 from .splitters import split_into_sentences
 from .chain import Chain, BEGIN
@@ -96,11 +96,11 @@ class Text:
             "parsed_sentences": self.parsed_sentences if self.retain_original else None,
         }
 
-    def to_json(self):
+    def to_json(self, enc="utf-8"):
         """
         Returns the underlying data as a JSON string.
         """
-        return json.dumps(self.to_dict())
+        return orjson.dumps(self.to_dict()).decode(encoding=enc)
 
     @classmethod
     def from_dict(cls, obj, **kwargs):
@@ -113,7 +113,7 @@ class Text:
 
     @classmethod
     def from_json(cls, json_str):
-        return cls.from_dict(json.loads(json_str))
+        return cls.from_dict(orjson.loads(json_str))
 
     def sentence_split(self, text):
         """
