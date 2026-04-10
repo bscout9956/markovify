@@ -1,7 +1,7 @@
 import random
 import operator
 import bisect
-import json
+import orjson
 import copy
 
 BEGIN = "___BEGIN__"
@@ -141,11 +141,11 @@ class Chain:
         """
         return list(self.gen(init_state))
 
-    def to_json(self):
+    def to_json(self, enc="utf-8"):
         """
         Dump the model as a JSON object, for loading later.
         """
-        return json.dumps(list(self.model.items()))
+        return orjson.dumps(list(self.model.items())).decode(encoding=enc)
 
     @classmethod
     def from_json(cls, json_thing):
@@ -154,7 +154,7 @@ class Chain:
         return the corresponding markovify.Chain.
         """
 
-        obj = json.loads(json_thing) if isinstance(json_thing, str) else json_thing
+        obj = orjson.loads(json_thing) if isinstance(json_thing, str) else json_thing
 
         if isinstance(obj, list):
             rehydrated = {tuple(item[0]): item[1] for item in obj}
