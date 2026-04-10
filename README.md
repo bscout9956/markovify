@@ -1,9 +1,6 @@
-[![CI](https://github.com/jsvine/markovify/workflows/CI/badge.svg)](https://github.com/jsvine/markovify/actions)
+[![CI](https://github.com/bscout9956/markovify/workflows/CI/badge.svg)](https://github.com/bscout9956/markovify/actions)
 [![Version](https://img.shields.io/pypi/v/markovify.svg)](https://pypi.python.org/pypi/markovify)
-[![Build status](https://travis-ci.org/jsvine/markovify.png)](https://travis-ci.org/jsvine/markovify)
-[![Code coverage](https://img.shields.io/coveralls/jsvine/markovify.svg)](https://coveralls.io/github/jsvine/markovify)
-[![Support Python versions](https://img.shields.io/pypi/pyversions/markovify.svg)](https://pypi.python.org/pypi/markovify)
-
+[![Code coverage](https://img.shields.io/coveralls/bscout9956/markovify.svg)](https://coveralls.io/github/bscout9956/markovify)
 
 # Markovify
 
@@ -32,7 +29,6 @@ Some reasons:
 - Relies only on pure-Python libraries, and very few of them.
 
 - Tested on Python 3.14, it should work on Python 3.10 and above.
-
 
 ## Installation
 
@@ -106,12 +102,14 @@ This code snippet would combine `model_a` and `model_b`, but, it would also plac
 ### Compiling a model
 
 Once a model has been generated, it may also be compiled for improved text generation speed and reduced size.
+
 ```python
 text_model = markovify.Text(text)
 text_model = text_model.compile()
 ```
 
 Models may also be compiled in-place:
+
 ```python
 text_model = markovify.Text(text)
 text_model.compile(inplace = True)
@@ -127,7 +125,6 @@ Starting with `v0.7.2`, `markovify.Text` accepts two additional parameters: `wel
 - Setting `well_formed = False` skips the step in which input sentences are rejected if they contain one of the 'bad characters' (i.e. `()[]'"`)
 
 - Setting `reject_reg` to a regular expression of your choice allows you change the input-sentence rejection pattern. This only applies if `well_formed` is True, and if the expression is non-empty.
-
 
 ### Extending `markovify.Text`
 
@@ -224,20 +221,19 @@ for (dirpath, _, filenames) in os.walk("path/to/my/huge/corpus"):
 print(combined_model.make_sentence())
 ```
 
-
 ## Markovify In The Wild
 
 - BuzzFeed's [Tom Friedman Sentence Generator](http://www.buzzfeed.com/jsvine/the-tom-friedman-sentence-generator) / [@mot_namdeirf](https://twitter.com/mot_namdeirf).
 - [/u/user_simulator](https://www.reddit.com/user/user_simulator), a Reddit bot that generates comments based on a user's comment history. [[code](https://github.com/trambelus/UserSim)]
 - [SubredditSimulator](https://www.reddit.com/r/SubredditSimulator), which [uses `markovify`](https://www.reddit.com/r/SubredditSimMeta/comments/3d910r/i_was_inspired_by_this_place_and_made_a_twitter/ct3vjp0) to generate random Reddit submissions and comments based on a subreddit's previous activity. [[code](https://github.com/Deimos/SubredditSimulator)]
 - [college crapplication](http://college-crapplication.appspot.com/), a web-app that generates college application essays. [[code](https://github.com/mattr555/college-crapplication)]
-- [@MarkovPicard](https://twitter.com/MarkovPicard), a Twitter bot based on *Star Trek: The Next Generation* transcripts. [[code](https://github.com/rdsheppard95/MarkovPicard)]
+- [@MarkovPicard](https://twitter.com/MarkovPicard), a Twitter bot based on _Star Trek: The Next Generation_ transcripts. [[code](https://github.com/rdsheppard95/MarkovPicard)]
 - [sekrits.herokuapp.com](https://sekrits.herokuapp.com/), a `markovify`-powered quiz that challenges you to tell the difference between "two file titles relating to matters of [Australian] national security" — one real and one fake. [[code](https://sekrits.herokuapp.com/)]
 - [Hacker News Simulator](http://news.ycombniator.com/), which does what it says on the tin. [[code](https://github.com/orf/hnewssimulator)]
 - [Stak Attak](http://www.stakattak.me/), a "poetic stackoverflow answer generator." [[code](https://github.com/theannielin/hackharvard)]
 - [MashBOT](https://twitter.com/mashomatic), a `markovify`-powered Twitter bot attached to a printer. Presented by [Helen J Burgess at Babel Toronto 2015](http://electric.press/mash/). [[code](https://github.com/hyperrhiz/mashbot)]
-- [The Mansfield Reporter](http://maxlupo.com/mansfield-reporter/), "a simple device which can generate new text from some of history's greatest authors [...] running on a tiny Raspberry Pi, displaying through a tft screen from Adafruit." 
-- [twitter markov](https://github.com/fitnr/twitter_markov), a tool to "create markov chain ("_ebooks") accounts on Twitter."
+- [The Mansfield Reporter](http://maxlupo.com/mansfield-reporter/), "a simple device which can generate new text from some of history's greatest authors [...] running on a tiny Raspberry Pi, displaying through a tft screen from Adafruit."
+- [twitter markov](https://github.com/fitnr/twitter_markov), a tool to "create markov chain ("\_ebooks") accounts on Twitter."
 - [@Bern_Trump_Bot](https://twitter.com/bern_trump_bot), "Bernie Sanders and Donald Trump driven by Markov Chains." [[code](https://github.com/MichaelMartinez/Bern_Trump_Bot)]
 - [@RealTrumpTalk](https://twitter.com/RealTrumpTalk), "A bot that uses the things that @realDonaldTrump tweets to create it's own tweets." [[code](https://github.com/CastleCorp/TrumpTalk)]
 - [Taylor Swift Song Generator](http://taytay.mlavin.org/), which does what it says. [[code](https://github.com/caktus/taytay)]
@@ -253,8 +249,8 @@ print(combined_model.make_sentence())
 - [mannynotfound/interview-bot](https://github.com/mannynotfound/interview-bot), "A python based terminal prompt app to automate the interview process."
 - [Steam Game Generator](http://applepinegames.com/tech/steam-game-generator), which "uses data from real Steam games, randomized using Markov chains." [[code](https://github.com/applepinegames/steam_game_generator)]
 - [@DicedOnionBot](https://twitter.com/DicedOnionBot), which "generates new headlines by The Onion by regurgitating and combining old headlines." [[code](https://github.com/mobeets/fake-onion)]
-- [@thought__leader](https://twitter.com/thought__leader), "Thinking thoughts so you don't have to!" [[blog post](http://jordan-wright.com/blog/post/2016-04-08-i-automated-infosec-thought-leadership/)]
-- [@_murakamibot](https://twitter.com/_murakamibot) and [@jamesjoycebot](https://twitter.com/jamesjoycebot), bots that tweet Haruki Murakami and James Joyce-like sentences. [[code](https://github.com/tmkuba/markovBot)]
+- [@thought\_\_leader](https://twitter.com/thought__leader), "Thinking thoughts so you don't have to!" [[blog post](http://jordan-wright.com/blog/post/2016-04-08-i-automated-infosec-thought-leadership/)]
+- [@\_murakamibot](https://twitter.com/_murakamibot) and [@jamesjoycebot](https://twitter.com/jamesjoycebot), bots that tweet Haruki Murakami and James Joyce-like sentences. [[code](https://github.com/tmkuba/markovBot)]
 - [shartificialintelligence.com](http://www.shartificialintelligence.com/), "the world's first creative ad agency staffed entirely with copywriter robots." [[code](https://github.com/LesGuessing/shartificial-intelligence)]
 - [@NightValeFeed](https://twitter.com/NightValeFeed), which "generates tweets by combining [@NightValeRadio](https://twitter.com/NightValeRadio) tweets with [@BuzzFeed](https://twitter.com/BuzzFeed) headlines." [[code](https://github.com/stepjue/night-vale-buzzfeed)]
 - [Wynbot9000](https://github.com/ammgws/wynbot), which "mimics your friends on Google Hangouts." [[code](https://github.com/ammgws/wynbot)]
@@ -269,9 +265,9 @@ print(combined_model.make_sentence())
 - [Stackexchange Simulator](https://se-simulator.lw1.at/), which uses StackExchange's bulk data to generate random questions and answers. [[code](https://github.com/Findus23/se-simulator)]
 - [@BloggingBot](https://twitter.com/BloggingBot), tweets sentences based on a corpus of 17 years of [blogging](http://artlung.com/blog/2018/02/23/markov-chains-are-hilarious/).
 - [Commencement Speech Generator](https://github.com/whatrocks/markov-commencement-speech), generates "graduation speech"-style quotes from a dataset of the "greatest of all time" commencement speeches)
-- [@alg_testament](https://twitter.com/alg_testament), tweets sentences based on The Old Testament and two coding textbooks in Russian. [[code](https://github.com/maryszmary/Algorithm-Testament)]  
+- [@alg_testament](https://twitter.com/alg_testament), tweets sentences based on The Old Testament and two coding textbooks in Russian. [[code](https://github.com/maryszmary/Algorithm-Testament)]
 - [@IRAMockBot](https://twitter.com/IRAMockBot), uses Twitter's data on tweets from Russian IRA-associated accounts to produce fake IRA tweets, for educational and study purposes.[[code](https://github.com/nwithan8/IRAMockBot)]
-- [Personal Whatsapp Chat Analyzer](https://github.com/Giuzzilla/Personal-Whatsapp-Chat-Analyzer), some basic analytics for WhatsApp chat exports (private & groups), word counting & markov chain phrase generator 
+- [Personal Whatsapp Chat Analyzer](https://github.com/Giuzzilla/Personal-Whatsapp-Chat-Analyzer), some basic analytics for WhatsApp chat exports (private & groups), word counting & markov chain phrase generator
 - [DeepfakeBot](https://deepfake-bot.readthedocs.io/), a system for converting your friends into Discord bots. [[code](https://github.com/rustygentile/deepfake-bot)]
 - [python-markov-novel](https://github.com/accraze/python-markov-novel), writes a random novel using markov chains, broken down into chapters
 - [python-ia-markov](https://github.com/accraze/python-ia-markov), trains Markov models on Internet Archive text files
