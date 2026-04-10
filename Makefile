@@ -9,8 +9,8 @@ requirements:
 	pip install -e .
 
 tests:
-	python -m pytest test
-	python -m coverage html
+	uv run pytest test
+	uv run coverage html
 
 check-black:
 	python -m black --check markovify test
