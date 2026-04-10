@@ -7,30 +7,26 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v2
+      - uses: actions/checkout@v6
 
-    - name: Set up Python 3.9
-      uses: actions/setup-python@v2
-      with:
-        python-version: 3.9
+      - name: Set up Python
+        uses: actions/setup-python@v6
+        with:
+          python-version-file: ".python-version"
 
-    - name: Configure pip caching
-      uses: actions/cache@v2
-      with:
-        path: ~/.cache/pip
-        key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt')}}-${{ hashFiles('**/requirements-dev.txt') }}
+      - name: Install uv
+        uses: astral-sh/setup-uv@v7
+        with:
+          version: "0.11.6"
 
-    - name: Install Python dependencies
-      run: |
-        python -m pip install --upgrade pip
-        pip install -r requirements.txt
-        pip install -r requirements-dev.txt
+      - name: Install Python dependencies
+        run: uv sync --locked --all-extras --dev
 
-    - name: Validate against psf/black
-      run: python -m black --check markovify test
+      - name: Validate against psf/black
+        run: uv run black --check markovify test
 
-    - name: Validate against flake8
-      run: python -m flake8 markovify test
+      - name: Validate against flake8
+        run: uv run flake8 markovify test
 
   tests:
     needs: lint
@@ -39,36 +35,26 @@ jobs:
 
     strategy:
       matrix:
-        python-version: ["3.7", "3.8", "3.9", "3.10"]
+        python-version: ["3.10", "3.14"]
         os: ["ubuntu-latest", "macos-latest", "windows-latest"]
+    env:
+      UV_PYTHON: ${{matrix.python-version}}
 
     steps:
-    - uses: actions/checkout@v2
+      - uses: actions/checkout@v6
 
-    - name: Set up Python ${{ matrix.python-version }}
-      uses: actions/setup-python@v2
-      with:
-        python-version: ${{ matrix.python-version }}
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v6
+        with:
+          python-version: ${{ matrix.python-version }}
 
-    - name: Configure pip caching
-      uses: actions/cache@v2
-      with:
-        path: ~/.cache/pip
-        key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt')}}-${{ hashFiles('**/requirements-dev.txt') }}
+      - name: Install uv
+        uses: astral-sh/setup-uv@v7
+        with:
+          version: "0.11.6"
 
-    - name: Install Python dependencies
-      run: |
-        python -m site
-        python -m pip install --upgrade pip setuptools wheel
-        pip install -r requirements.txt
-        pip install -r requirements-dev.txt
+      - name: Install Python dependencies
+        run: uv sync --locked --all-extras --dev
 
-    - name: Run tests
-      run: make tests
-
-    - name: Upload code coverage
-      uses: codecov/codecov-action@v1.0.12
-      if: matrix.python-version == 3.9
-
-    - name: Build package
-      run: python setup.py build sdist
+      - name: Run tests
+        run: make tests
