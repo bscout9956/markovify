@@ -5,7 +5,10 @@ description = "Markovify is a simple, extensible Markov chain generator. Right n
 readme = "README.md"
 requires-python = ">=3.10"
 license = { text = "MIT" }
-dependencies = ["unidecode>=1.4.0"]
+dependencies = [
+    "orjson>=3.11.8",
+    "unidecode>=1.4.0",
+]
 authors = [{ name = "Jeremy Singer-Vine", email = "jsvine@gmail.com" }]
 keywords = ["markov", "chain", "text"]
 classifiers = [
