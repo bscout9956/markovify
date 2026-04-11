@@ -100,6 +100,7 @@ class Chain:
         """
         if self.compiled:
             choices, cumdist = self.model[state]
+            return random.choices(choices, cum_weights=cumdist, k=1)
         elif state == tuple([BEGIN] * self.state_size):
             choices = self.begin_choices
             cumdist = self.begin_cumdist
