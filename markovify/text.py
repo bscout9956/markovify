@@ -50,13 +50,15 @@ class Text:
         if well_formed and reject_reg != "":
             self.reject_pat: re.Pattern[str] = re.compile(reject_reg)
 
-        can_make_sentences: bool = parsed_sentences is not None or input_text is not None
+        can_make_sentences: bool = (
+            parsed_sentences is not None or input_text is not None
+        )
         self.retain_original: bool = retain_original and can_make_sentences
         self.state_size: int = state_size
 
         if self.retain_original:
-            self.parsed_sentences: list[Any] | list[list[str | Any]] = parsed_sentences or list(
-                self.generate_corpus(input_text)
+            self.parsed_sentences: list[Any] | list[list[str | Any]] = (
+                parsed_sentences or list(self.generate_corpus(input_text))
             )
 
             # Rejoined text lets us assess the novelty of generated sentences
@@ -67,8 +69,9 @@ class Text:
         else:
             parsed = None
             if not chain:
-                parsed: Optional[Iterable[Any]
-                                 ] = parsed_sentences or self.generate_corpus(input_text)
+                parsed: Optional[Iterable[Any]] = (
+                    parsed_sentences or self.generate_corpus(input_text)
+                )
             self.chain: Chain = chain or Chain(parsed, state_size)
 
     def compile(self, inplace: bool = False):
@@ -259,7 +262,9 @@ class Text:
             if sentence and min_chars <= len(sentence) <= max_chars:
                 return sentence
 
-    def make_sentence_with_start(self, beginning: str, strict: bool = True, **kwargs) -> str:
+    def make_sentence_with_start(
+        self, beginning: str, strict: bool = True, **kwargs
+    ) -> str:
         """
         Tries making a sentence that begins with `beginning` string,
         which should be a string of one to `self.state` words known
