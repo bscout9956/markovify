@@ -35,7 +35,7 @@ class Chain:
         """
         self.state_size: int = state_size
         self.model = model or self.build(corpus, self.state_size)
-        self.compiled = (len(self.model) > 0) and (
+        self.compiled: bool = (len(self.model) > 0) and (
             isinstance(self.model[tuple([BEGIN] * state_size)], list)
         )
         if not self.compiled:
