@@ -1,5 +1,6 @@
 import functools
 import re
+from typing import Any, Optional
 import orjson
 import random
 from .splitters import split_into_sentences
@@ -20,13 +21,13 @@ class Text:
 
     def __init__(
         self,
-        input_text,
-        state_size=2,
-        chain=None,
-        parsed_sentences=None,
-        retain_original=True,
-        well_formed=True,
-        reject_reg="",
+        input_text: Optional[str],
+        state_size: int = 2,
+        chain: Optional[Chain] = None,
+        parsed_sentences: Optional[list] = None,
+        retain_original: bool = True,
+        well_formed: bool = True,
+        reject_reg: str | re.Pattern[str] = "",
     ):
         """
         input_text: A string.
@@ -45,34 +46,36 @@ class Text:
               standard rejection pattern.
         """
 
-        self.well_formed = well_formed
+        self.well_formed: bool = well_formed
         if well_formed and reject_reg != "":
-            self.reject_pat = re.compile(reject_reg)
+            self.reject_pat: re.Pattern[str] = re.compile(reject_reg)
 
-        can_make_sentences = parsed_sentences is not None or input_text is not None
-        self.retain_original = retain_original and can_make_sentences
-        self.state_size = state_size
+        can_make_sentences: bool = parsed_sentences is not None or input_text is not None
+        self.retain_original: bool = retain_original and can_make_sentences
+        self.state_size: int = state_size
 
         if self.retain_original:
-            self.parsed_sentences = parsed_sentences or list(
+            self.parsed_sentences: list[Any] | list[list[str | Any]] = parsed_sentences or list(
                 self.generate_corpus(input_text)
             )
 
             # Rejoined text lets us assess the novelty of generated sentences
-            self.rejoined_text = self.sentence_join(
+            self.rejoined_text: str = self.sentence_join(
                 map(self.word_join, self.parsed_sentences)
             )
             self.chain = chain or Chain(self.parsed_sentences, state_size)
         else:
+            parsed = None
             if not chain:
-                parsed = parsed_sentences or self.generate_corpus(input_text)
-            self.chain = chain or Chain(parsed, state_size)
+                parsed: Optional[list[Any] | map[list[str | Any]]
+                                 ] = parsed_sentences or self.generate_corpus(input_text)
+            self.chain: Chain = chain or Chain(parsed, state_size)
 
-    def compile(self, inplace=False):
+    def compile(self, inplace: bool = False):
         if inplace:
             self.chain.compile(inplace=True)
             return self
-        cchain = self.chain.compile(inplace=False)
+        cchain: Chain = self.chain.compile(inplace=False)
         psent = None
         if hasattr(self, "parsed_sentences"):
             psent = self.parsed_sentences
@@ -96,7 +99,7 @@ class Text:
             "parsed_sentences": self.parsed_sentences if self.retain_original else None,
         }
 
-    def to_json(self, enc="utf-8"):
+    def to_json(self, enc="utf-8") -> str:
         """
         Returns the underlying data as a JSON string.
         """
@@ -115,33 +118,33 @@ class Text:
     def from_json(cls, json_str):
         return cls.from_dict(orjson.loads(json_str))
 
-    def sentence_split(self, text):
+    def sentence_split(self, text: str) -> list[str]:
         """
         Splits full-text string into a list of sentences.
         """
         return split_into_sentences(text)
 
-    def sentence_join(self, sentences):
+    def sentence_join(self, sentences) -> str:
         """
         Re-joins a list of sentences into the full text.
         """
         return " ".join(sentences)
 
-    word_split_pattern = re.compile(r"\s+")
+    word_split_pattern: re.Pattern[str] = re.compile(r"\s+")
 
-    def word_split(self, sentence):
+    def word_split(self, sentence) -> list[str | Any]:
         """
         Splits a sentence into a list of words.
         """
         return re.split(self.word_split_pattern, sentence)
 
-    def word_join(self, words):
+    def word_join(self, words) -> str:
         """
         Re-joins a list of words into a sentence.
         """
         return " ".join(words)
 
-    def test_sentence_input(self, sentence):
+    def test_sentence_input(self, sentence: str) -> bool:
         """
         A basic sentence filter. The default rejects sentences that contain
         the type of punctuation that would look strange on its own
@@ -150,26 +153,30 @@ class Text:
         if len(sentence.strip()) == 0:
             return False
         # Decode unicode, mainly to normalize fancy quotation marks
-        decoded = unidecode(sentence)
+        decoded: str = unidecode(sentence)
         # Sentence shouldn't contain problematic characters
         if self.well_formed and self.reject_pat.search(decoded):
             return False
         return True
 
-    def generate_corpus(self, text):
+    def generate_corpus(self, text: Optional[str | list[str]]) -> map[list[str | Any]]:
         """
         Given a text string, returns a list of lists; that is, a list of
         "sentences," each of which is a list of words. Before splitting into
         words, the sentences are filtered through `self.test_sentence_input`
         """
+
+        # If we're not dealing with a str we are possibly dealing with a list of strs
         if isinstance(text, str):
-            sentences = self.sentence_split(text)
+            sentences: list[str] = self.sentence_split(text)
         else:
             sentences = []
-            for line in text:
-                sentences += self.sentence_split(line)
-        passing = filter(self.test_sentence_input, sentences)
-        runs = map(self.word_split, passing)
+            if text:
+                for line in text:
+                    sentences += self.sentence_split(line)
+
+        passing: filter[str] = filter(self.test_sentence_input, sentences)
+        runs: map[list[str | Any]] = map(self.word_split, passing)
         return runs
 
     def test_sentence_output(self, words, max_overlap_ratio, max_overlap_total):
@@ -192,7 +199,7 @@ class Text:
                 return False
         return True
 
-    def make_sentence(self, init_state=None, **kwargs):
+    def make_sentence(self, init_state=None, **kwargs) -> str | None:
         """
         Attempts `tries` (default: 10) times to generate a valid sentence,
         based on the model and `test_sentence_output`. Passes `max_overlap_ratio`
@@ -252,7 +259,7 @@ class Text:
             if sentence and min_chars <= len(sentence) <= max_chars:
                 return sentence
 
-    def make_sentence_with_start(self, beginning, strict=True, **kwargs):
+    def make_sentence_with_start(self, beginning: str, strict: bool = True, **kwargs) -> str:
         """
         Tries making a sentence that begins with `beginning` string,
         which should be a string of one to `self.state` words known
@@ -266,11 +273,11 @@ class Text:
 
         **kwargs are passed to `self.make_sentence`
         """
-        split = tuple(self.word_split(beginning))
-        word_count = len(split)
+        split: tuple[str | Any, ...] = tuple(self.word_split(beginning))
+        word_count: int = len(split)
 
         if word_count == self.state_size:
-            init_states = [split]
+            init_states: list[tuple[str | Any, ...]] = [split]
 
         elif 0 < word_count < self.state_size:
             if strict:
@@ -281,7 +288,7 @@ class Text:
 
                 random.shuffle(init_states)
         else:
-            err_msg = (
+            err_msg: str = (
                 f"`make_sentence_with_start` for this model requires a string "
                 f"containing 1 to {self.state_size} words. "
                 f"Yours has {word_count}: {str(split)}"
@@ -289,7 +296,7 @@ class Text:
             raise ParamError(err_msg)
 
         for init_state in init_states:
-            output = self.make_sentence(init_state, **kwargs)
+            output: str | None = self.make_sentence(init_state, **kwargs)
             if output is not None:
                 return output
         err_msg = (
@@ -307,7 +314,7 @@ class Text:
         the latest query in case `self.make_sentence_with_start` is called
         repeatedly with the same beginning string.
         """
-        word_count = len(split)
+        word_count: int = len(split)
         return [
             key
             for key in self.chain.model.keys()

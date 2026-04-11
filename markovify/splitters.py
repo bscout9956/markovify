@@ -1,4 +1,5 @@
 import re
+from typing import Iterator
 
 uppercase_letter_pat = re.compile(r"^[A-Z]$", re.UNICODE)
 initialism_pat = re.compile(r"^[A-Za-z0-9]{1,2}(\.[A-Za-z0-9]{1,2})+\.$", re.UNICODE)
@@ -50,7 +51,7 @@ def is_sentence_ender(word):
     return False
 
 
-def split_into_sentences(text):
+def split_into_sentences(text: str) -> list[str]:
     potential_end_pat = re.compile(
         r"".join(
             [
@@ -61,12 +62,12 @@ def split_into_sentences(text):
         ),
         re.U,
     )
-    dot_iter = re.finditer(potential_end_pat, text)
-    end_indices = [
+    dot_iter: Iterator[re.Match[str]] = re.finditer(potential_end_pat, text)
+    end_indices: list[int] = [
         (x.start() + len(x.group(1)) + len(x.group(2)))
         for x in dot_iter
         if is_sentence_ender(x.group(1))
     ]
     spans = zip([None] + end_indices, end_indices + [None])
-    sentences = [text[start:end].strip() for start, end in spans]
+    sentences: list[str] = [text[start:end].strip() for start, end in spans]
     return sentences

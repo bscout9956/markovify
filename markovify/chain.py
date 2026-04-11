@@ -1,6 +1,7 @@
 import random
 import operator
 import bisect
+from typing import Any, Optional
 import orjson
 import copy
 
@@ -44,15 +45,15 @@ class Chain:
         `state_size`: An integer indicating the number of items the model
         uses to represent its state. For text generation, 2 or 3 are typical.
         """
-        self.state_size = state_size
+        self.state_size: int = state_size
         self.model = model or self.build(corpus, self.state_size)
         self.compiled = (len(self.model) > 0) and (
-            type(self.model[tuple([BEGIN] * state_size)]) == list
+            isinstance(self.model[tuple([BEGIN] * state_size)], list)
         )
         if not self.compiled:
             self.precompute_begin_state()
 
-    def compile(self, inplace=False):
+    def compile(self, inplace: bool = False):
         if self.compiled:
             if inplace:
                 return self
@@ -66,7 +67,7 @@ class Chain:
         self.compiled = True
         return self
 
-    def build(self, corpus, state_size):
+    def build(self, corpus: Optional[list], state_size: int):
         """
         Build a Python representation of the Markov model. Returns a dict
         of dicts where the keys of the outer dict represent all possible states,
@@ -79,31 +80,33 @@ class Chain:
         # usage is far higher.
         model = {}
 
-        for run in corpus:
-            items = ([BEGIN] * state_size) + run + [END]
-            for i in range(len(run) + 1):
-                state = tuple(items[i : i + state_size])
-                follow = items[i + state_size]
-                if state not in model:
-                    model[state] = {}
+        if corpus:
+            for run in corpus:
+                items = ([BEGIN] * state_size) + run + [END]
+                for i in range(len(run) + 1):
+                    state = tuple(items[i : i + state_size])
+                    follow = items[i + state_size]
+                    if state not in model:
+                        model[state] = {}
 
-                if follow not in model[state]:
-                    model[state][follow] = 0
+                    if follow not in model[state]:
+                        model[state][follow] = 0
 
-                model[state][follow] += 1
+                    model[state][follow] += 1
+
         return model
 
-    def precompute_begin_state(self):
+    def precompute_begin_state(self) -> None:
         """
         Caches the summation calculation and available choices for BEGIN * state_size.
         Significantly speeds up chain generation on large corpora. Thanks, @schollz!
         """
-        begin_state = tuple([BEGIN] * self.state_size)
+        begin_state: tuple[str, ...] = tuple([BEGIN] * self.state_size)
         choices, cumdist = compile_next(self.model[begin_state])
         self.begin_cumdist = cumdist
         self.begin_choices = choices
 
-    def move(self, state):
+    def move(self, state: tuple):
         """
         Given a state, choose the next item at random.
         """
