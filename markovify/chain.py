@@ -1,25 +1,13 @@
 import random
-import operator
 import bisect
-from typing import Any, Optional
+from typing import Any, Iterable, Optional
 import orjson
 import copy
 
+from itertools import accumulate
+
 BEGIN = "___BEGIN__"
 END = "___END__"
-
-
-def accumulate(iterable, func=operator.add):
-    """
-    Cumulative calculations. (Summation, by default.)
-    Via: https://docs.python.org/3/library/itertools.html#itertools.accumulate
-    """
-    it = iter(iterable)
-    total = next(it)
-    yield total
-    for element in it:
-        total = func(total, element)
-        yield total
 
 
 def compile_next(next_dict):
