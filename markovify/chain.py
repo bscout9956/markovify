@@ -55,7 +55,7 @@ class Chain:
         self.compiled = True
         return self
 
-    def build(self, corpus: Optional[list], state_size: int):
+    def build(self, corpus: Optional[Iterable[Any]], state_size: int):
         """
         Build a Python representation of the Markov model. Returns a dict
         of dicts where the keys of the outer dict represent all possible states,
