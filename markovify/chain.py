@@ -34,7 +34,7 @@ class Chain:
     For example: Sentences.
     """
 
-    def __init__(self, corpus, state_size, model=None):
+    def __init__(self, corpus: Optional[Iterable[Any]], state_size: int, model=None):
         """
         `corpus`: A list of lists, where each outer list is a "run"
         of the process (e.g., a single sentence), and each inner list

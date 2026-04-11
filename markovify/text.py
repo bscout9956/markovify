@@ -1,6 +1,6 @@
 import functools
 import re
-from typing import Any, Optional
+from typing import Any, Iterable, Optional
 import orjson
 import random
 from .splitters import split_into_sentences
@@ -67,7 +67,7 @@ class Text:
         else:
             parsed = None
             if not chain:
-                parsed: Optional[list[Any] | map[list[str | Any]]
+                parsed: Optional[Iterable[Any]
                                  ] = parsed_sentences or self.generate_corpus(input_text)
             self.chain: Chain = chain or Chain(parsed, state_size)
 
@@ -159,7 +159,7 @@ class Text:
             return False
         return True
 
-    def generate_corpus(self, text: Optional[str | list[str]]) -> map[list[str | Any]]:
+    def generate_corpus(self, text: Optional[str | list[str]]) -> Iterable[Any]:
         """
         Given a text string, returns a list of lists; that is, a list of
         "sentences," each of which is a list of words. Before splitting into
