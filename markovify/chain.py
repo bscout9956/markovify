@@ -13,7 +13,7 @@ END = "___END__"
 def compile_next(next_dict):
     words = tuple(next_dict.keys())
     cff = tuple(accumulate(next_dict.values()))
-    return [words, cff]
+    return (words, cff)
 
 
 class Chain:
@@ -36,7 +36,7 @@ class Chain:
         self.state_size: int = state_size
         self.model = model or self.build(corpus, self.state_size)
         self.compiled: bool = (len(self.model) > 0) and (
-            isinstance(self.model[tuple([BEGIN] * state_size)], list)
+            isinstance(self.model[tuple([BEGIN] * state_size)], (list, tuple))
         )
         if not self.compiled:
             self.precompute_begin_state()
