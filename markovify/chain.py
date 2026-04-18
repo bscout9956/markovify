@@ -11,8 +11,8 @@ END = "___END__"
 
 
 def compile_next(next_dict):
-    words = list(next_dict.keys())
-    cff = list(accumulate(next_dict.values()))
+    words = tuple(next_dict.keys())
+    cff = tuple(accumulate(next_dict.values()))
     return [words, cff]
 
 
@@ -45,7 +45,7 @@ class Chain:
         if self.compiled:
             if inplace:
                 return self
-            return Chain(None, self.state_size, model=copy.deepcopy(self.model))
+            return Chain(None, self.state_size, model=self.model.copy())
         mdict = {
             state: compile_next(next_dict) for (state, next_dict) in self.model.items()
         }
