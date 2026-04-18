@@ -139,7 +139,7 @@ class Text:
         """
         Splits a sentence into a list of words.
         """
-        return re.split(self.word_split_pattern, sentence)
+        return [sys.intern(w) for w in re.split(self.word_split_pattern, sentence)]
 
     def word_join(self, words) -> str:
         """
