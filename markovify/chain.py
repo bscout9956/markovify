@@ -1,8 +1,8 @@
 import random
 import bisect
+import sys
 from typing import Any, Iterable, Optional
 import orjson
-import copy
 
 from itertools import accumulate
 
@@ -148,7 +148,16 @@ class Chain:
         obj = orjson.loads(json_thing) if isinstance(json_thing, str) else json_thing
 
         if isinstance(obj, list):
-            rehydrated = {tuple(item[0]): item[1] for item in obj}
+            rehydrated = {}
+            for item in obj:
+                state = tuple(sys.intern(w) for w in item[0])
+
+                if isinstance(item[1], dict):
+                    rehydrated[state] = {sys.intern(k): v for k, v in item[1].items()}
+                else:
+                    choices = tuple(sys.intern(w) for w in item[1][0])
+                    weights = tuple(item[1][1])
+                    rehydrated[state] = (choices, weights)
         elif isinstance(obj, dict):
             rehydrated = obj
         else:
