@@ -1,4 +1,4 @@
-name: CI
+name: Test and Lint
 
 on: [push, pull_request, workflow_dispatch]
 
@@ -23,7 +23,7 @@ jobs:
         run: uv sync --locked --all-extras --dev
 
       - name: Validate against psf/black
-        run: uv run black --check markovify test
+        run: uv run black --check markovify test --target-version py310
 
       - name: Validate against flake8
         run: uv run flake8 markovify test

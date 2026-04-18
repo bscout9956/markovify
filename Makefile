@@ -13,12 +13,12 @@ tests:
 	uv run coverage html
 
 check-black:
-	python -m black --check markovify test
+	uv run black --check markovify test
 
 check-flake:
-	python -m flake8 markovify test
+	uv run flake8 markovify test
 
 lint: check-flake check-black
 
 format:
-	python -m black markovify test
+	uv run black markovify test
