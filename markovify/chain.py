@@ -1,8 +1,8 @@
 import random
 import bisect
+import sys
 from typing import Any, Iterable, Optional
 import orjson
-import copy
 
 from itertools import accumulate
 
@@ -11,9 +11,9 @@ END = "___END__"
 
 
 def compile_next(next_dict):
-    words = list(next_dict.keys())
-    cff = list(accumulate(next_dict.values()))
-    return [words, cff]
+    words = tuple(next_dict.keys())
+    cff = tuple(accumulate(next_dict.values()))
+    return (words, cff)
 
 
 class Chain:
@@ -36,7 +36,7 @@ class Chain:
         self.state_size: int = state_size
         self.model = model or self.build(corpus, self.state_size)
         self.compiled: bool = (len(self.model) > 0) and (
-            isinstance(self.model[tuple([BEGIN] * state_size)], list)
+            isinstance(self.model[tuple([BEGIN] * state_size)], (list, tuple))
         )
         if not self.compiled:
             self.precompute_begin_state()
@@ -45,7 +45,7 @@ class Chain:
         if self.compiled:
             if inplace:
                 return self
-            return Chain(None, self.state_size, model=copy.deepcopy(self.model))
+            return Chain(None, self.state_size, model=self.model.copy())
         mdict = {
             state: compile_next(next_dict) for (state, next_dict) in self.model.items()
         }
@@ -148,7 +148,16 @@ class Chain:
         obj = orjson.loads(json_thing) if isinstance(json_thing, str) else json_thing
 
         if isinstance(obj, list):
-            rehydrated = {tuple(item[0]): item[1] for item in obj}
+            rehydrated = {}
+            for item in obj:
+                state = tuple(sys.intern(w) for w in item[0])
+
+                if isinstance(item[1], dict):
+                    rehydrated[state] = {sys.intern(k): v for k, v in item[1].items()}
+                else:
+                    choices = tuple(sys.intern(w) for w in item[1][0])
+                    weights = tuple(item[1][1])
+                    rehydrated[state] = (choices, weights)
         elif isinstance(obj, dict):
             rehydrated = obj
         else:
